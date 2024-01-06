@@ -11,7 +11,3 @@ I am an enthusiastic  M.S. Data Science student with skills in data collection, 
 <h2> 🤳 Connect with me:</h2>
 
 [linkedin]: www.linkedin.com/in/bright-amenyo-597a84244
-
-<!--
-**brightamenyo/Bright** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
-
