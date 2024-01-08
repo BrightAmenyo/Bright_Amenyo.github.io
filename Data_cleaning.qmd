@@ -1,0 +1,321 @@
+---
+title: "Data Cleaning"
+author: "Bright Amenyo"
+format: revealjs
+editor: visual
+---
+
+# **Group attributes by category**: 
+
+Organize related attributes into logical groups, like demographics, wealth, business, location, Economic Indicators and
+
+Descriptive attribute names: Use clear and concise names that accurately reflect the meaning of each attribute.
+
+### 
+
+**Demographics:**
+
+-   
+rank: The ranking of the billionaire in terms of wealth (integer)
+
+-   person Name: The full name of the billionaire (string)
+
+-   age: The age of the billionaire (integer)
+
+-   gender: The gender of the billionaire (string)
+
+-   birthDate: The birthdate of the billionaire (date)
+
+-   lastName: The last name of the billionaire (string)
+
+-   firstName: The first name of the billionaire (string)
+
+-   countryOfCitizenship: The country of citizenship of the billionaire (string)
+
+### **Wealth:**
+
+-   finalWorth:The final net worth of the billionaire in U.S. dollars (float)
+
+-   source: The source of the billionaire's wealth (string)
+
+-   status: "D" for self-made, "U" for inherited (string)
+
+### **Business:**
+
+-   category: The category or industry of the billionaire's business (string)
+
+-   organization: The name of the organization or company associated with the billionaire (string)
+
+-   industries: The industries associated with the billionaire's business interests (string list)
+
+### **Location:**
+
+-   country: The country in which the billionaire resides (string)
+
+-   city: The city in which the billionaire resides (string)
+
+-   state: The state in which the billionaire resides (string)
+
+-   residenceStateRegion: The region or state of residence of the billionaire (string)
+
+### **Economic Indicators:**
+
+-   cpi_country: Consumer Price Index (CPI) for the billionaire's country (float)
+
+-   gdp_country: Gross Domestic Product (GDP) for the billionaire's country (float)
+
+-   population_country: Population of the billionaire's country (integer)
+
+-   tax_revenue_country_country: Tax revenue in the billionaire's country (float)
+
+-   total_tax_rate_country: Total tax rate in the billionaire's country (float)
+
+### **Geospatial Coordinates:**
+
+-   latitude_country: Latitude coordinate of the billionaire's country (float)
+
+-   longitude_country: Longitude coordinate of the billionaire's country (float)
+
+# **Loading Dataset**
+
+```{r}
+Billion_data<-read.csv("Billionaires.csv",header = TRUE)
+library(dplyr) # Glimpse
+# Display the structure of the dataset
+glimpse(Billion_data) ## str(Billion_data)
+
+```
+
+# **Cleaning Data-set**
+
+## **Observe missing observations**
+
+```{r}
+# Convert empty strings to NA
+Billion_data[Billion_data == ""] <- NA ## Just to make sure all the blanks spaces are NA
+
+# Count missing values in each column
+missing_values <- colSums(is.na(Billion_data))
+# Create a data frame with column names and their corresponding missing counts
+missing_df <- data.frame(column = names(missing_values), missing_count = missing_values)
+# Sort the data frame by missing counts in descending order
+missing_df <- missing_df[order(-missing_df$missing_count), ]
+
+# Display the result
+print(missing_df)
+```
+
+## Handling missing observations(Categorical Variable)
+
+### Organization
+
+```{r}
+
+# Wild guess: assuming that when there's missing value under the organization section then it was unearned or inherited
+# Print specific columns
+print(Billion_data[c('organization', 'selfMade')])
+
+# Print the distribution of values in the 'title' column
+title_counts <- table(Billion_data$title)
+
+# Replace missing values in 'organization' when 'SelfMade' is 'FALSE'
+Billion_data$organization[Billion_data$selfMade == 'FALSE' & is.na(Billion_data$organization)] <- "Inherited"
+#Replace remaining true mission value with Unknown
+Billion_data$organization[is.na(Billion_data$organization)] <- "Unknown"
+
+```
+
+### Title
+
+-   Unknown values for their titles, might be because the person doesn't have a position at a company
+
+-   Fill missing values in 'title' with 'Unknown'
+
+```{r}
+Billion_data$title[is.na(Billion_data$title)] <- "Unknown"
+
+```
+
+### State and 'residence State Region'
+
+Missing values in both attribute would be as result of the billionaires living outside of United State
+
+\# Replace missing values in 'residenceStateRegion' with 'Outside US'
+
+```{r}
+# Print the counts of unique values in 'residenceStateRegion'
+table(Billion_data$residenceStateRegion)
+
+# Print the counts of unique values in 'state'
+table(Billion_data$state)
+Billion_data$residenceStateRegion[is.na(Billion_data$residenceStateRegion)] <- "Outside US"
+
+# Replace missing values in 'state' with 'Outside US'
+Billion_data$state[is.na(Billion_data$state)] <- "Outside US"
+
+
+```
+
+### City
+
+-    Probably could have used a method to fill these with other cities that reside in the same country
+
+```{r}
+Billion_data$city <- ifelse(is.na(Billion_data$city), Billion_data$country, Billion_data$city)
+
+```
+
+### Country
+
+-   Using their country of citizenship as a replacement value for country is the best option here
+
+```{r}
+Billion_data$country <- ifelse(is.na(Billion_data$country), Billion_data$countryOfCitizenship, Billion_data$country)
+
+
+
+
+
+
+```
+
+### First Name
+
+```{r}
+# Create a new column 'first_name' by splitting the 'name' column
+Billion_data$firstName <- sapply(strsplit(as.character(Billion_data$personName), " "), function(x) x[1])
+
+# Drop 'birthmonth' and 'birthdate' columns
+Billion_data <- Billion_data[, !names(Billion_data) %in% c('birthDate','birthYear','birthMonth','birthDay')]
+
+```
+
+## Handling missing observations(Numberical Observation )
+
+-   Unfortunately, it looks like this is just missing data. We'll use the mean of each, as they are national averages and most likely won't change that much
+
+-   Considering we're dealing with mostly developed countries.
+
+## 
+
+### cpi_change_country
+
+### cpi_country
+
+### tax_revenue_country_country
+
+### total_tax_rate_country
+
+### Life_expectancy_country
+
+```{r}
+
+# Replace missing values in 'cpi_change_country' with the mean
+Billion_data$cpi_change_country[is.na(Billion_data$cpi_change_country)] <- mean(Billion_data$cpi_change_country, na.rm = TRUE)
+
+# Replace missing values in 'cpi_country' with the mean
+Billion_data$cpi_country[is.na(Billion_data$cpi_country)] <- mean(Billion_data$cpi_country, na.rm = TRUE)
+
+# Replace missing values in 'tax_revenue_country_country' with the mean
+Billion_data$tax_revenue_country_country[is.na(Billion_data$tax_revenue_country_country)] <- mean(Billion_data$tax_revenue_country_country, na.rm = TRUE)
+
+# Replace missing values in 'total_tax_rate_country' with the mean
+Billion_data$total_tax_rate_country[is.na(Billion_data$total_tax_rate_country)] <- mean(Billion_data$total_tax_rate_country, na.rm = TRUE)
+
+# Replace missing values in 'life_expectancy_country' with the mean
+Billion_data$life_expectancy_country[is.na(Billion_data$life_expectancy_country)] <- mean(Billion_data$life_expectancy_country, na.rm = TRUE)
+
+```
+
+### gdp_country and population_country
+
+\# Remove '\$' and ',' from 'gdp_country' and convert to numeric
+
+\# Replace missing values in 'population_country' with the median, since the standard deviation is greater than the mean value
+
+```{r}
+Billion_data$gdp_country <- as.numeric(gsub("[\\$,]", "", Billion_data$gdp_country))
+
+
+# Print summary statistics for 'population_country' and 'gdp_country'
+print(summary(Billion_data[c('population_country', 'gdp_country')]))
+sd(Billion_data$population_country,na.rm = TRUE)
+sd(Billion_data$gdp_country,na.rm = TRUE)
+
+
+```
+
+```{r}
+median_population <- median(Billion_data$population_country, na.rm = TRUE)
+Billion_data$population_country[is.na(Billion_data$population_country)] <- median_population
+
+# Replace missing values in 'gdp_country' with the median
+median_gdp <- median(Billion_data$gdp_country, na.rm = TRUE)
+Billion_data$gdp_country[is.na(Billion_data$gdp_country)] <- median_gdp
+
+```
+
+### gross_primary_education_enrollment_country and gross_tertiary_education_enrollment
+
+```{r}
+# Print summary statistics for the specified columns
+print(summary(Billion_data[c('gross_primary_education_enrollment_country', 'gross_tertiary_education_enrollment')]))
+sd(Billion_data$gross_primary_education_enrollment_country,na.rm = TRUE)
+sd(Billion_data$gross_tertiary_education_enrollment,na.rm = TRUE)
+
+# Replace missing values in 'gross_primary_education_enrollment_country' with the mean
+mean_primary_education <- mean(Billion_data$gross_primary_education_enrollment_country, na.rm = TRUE)
+Billion_data$gross_primary_education_enrollment_country[is.na(Billion_data$gross_primary_education_enrollment_country)] <- mean_primary_education
+
+# Replace missing values in 'gross_tertiary_education_enrollment' with the mean
+mean_tertiary_education <- mean(Billion_data$gross_tertiary_education_enrollment, na.rm = TRUE)
+Billion_data$gross_tertiary_education_enrollment[is.na(Billion_data$gross_tertiary_education_enrollment)] <- mean_tertiary_education
+
+
+
+```
+
+### longitude_country' and latitude_country
+
+```{r}
+
+# Replace missing values in 'longitude_country' with the mean
+mean_longitude <- mean(Billion_data$longitude_country, na.rm = TRUE)
+Billion_data$longitude_country[is.na(Billion_data$longitude_country)] <- mean_longitude
+
+# Replace missing values in 'latitude_country' with the mean
+mean_latitude <- mean(Billion_data$latitude_country, na.rm = TRUE)
+Billion_data$latitude_country[is.na(Billion_data$latitude_country)] <- mean_latitude
+
+
+```
+
+### Age
+
+```{r}
+print(summary(Billion_data['age']))
+# Replace missing values in 'age' with the mean
+mean_age <- mean(Billion_data$age, na.rm = TRUE)
+Billion_data$age[is.na(Billion_data$age)] <- mean_age
+```
+
+### Birth Date, Birth Year, Birth Month and BirthDay'
+
+```{r}
+# Drop 'birthmonth' and 'birthdate' columns
+Billion_data <- Billion_data[, !names(Billion_data) %in% c('birthDate','birthYear','birthMonth','birthDay')]
+```
+
+# Cleaned Data
+
+```{r}
+# Count missing values in each column
+missing_values <- colSums(is.na(Billion_data))
+# Create a data frame with column names and their corresponding missing counts
+missing_df <- data.frame(column = names(missing_values), missing_count = missing_values)
+# Sort the data frame by missing counts in descending order
+missing_df <- missing_df[order(-missing_df$missing_count), ]
+
+# Display the result
+print(missing_df)
+```
