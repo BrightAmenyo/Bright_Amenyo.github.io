@@ -7,7 +7,7 @@ I am an enthusiastic  M.S. Biostatistics and Data Science student with skills in
 
 - <b>Data Cleaning Practice (Billionaire dataset)</b>
 
-
+<a href="https://github.com/BrightAmenyo/Bright_Amenyo.github.io/blob/main/Data_cleaning.qmd"</a>
 <h2> 🤳 Connect with me:</h2>
 
 [linkedin]: www.linkedin.com/in/bright-amenyo-597a84244
