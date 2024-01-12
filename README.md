@@ -3,7 +3,7 @@ I am an enthusiastic  M.S. Biostatistics and Data Science student with skills in
  
 <h1>Hi, I'm Bright! <br/><a href="https://brightamenyo.github.io/Bright.bio/">Data scientist</a>/ <a href="www.linkedin.com/in/bright-amenyo-597a84244">Health Consultant</a>, 
 
-<h2>👨‍💻 Data Cleaning and Modelling Projects:</h2>
+<h2>👨‍💻Projects:</h2>
 
 - <b>Data Cleaning Practice (Billionaire dataset)</b>
 
