@@ -5,12 +5,12 @@ I am an enthusiastic  M.S. Biostatistics and Data Science student with skills in
 
 <h2>👨‍💻Projects:</h2>
 
-- <b>Data Cleaning Practice (Billionaire dataset)</b>
+- **Data Cleaning Practice (Billionaire dataset)**
+  [GitHub Repository](https://github.com/BrightAmenyo/Bright_Amenyo.github.io/blob/main/Data_cleaning.qmd)
 
-https://github.com/BrightAmenyo/Bright_Amenyo.github.io/blob/main/Data_cleaning.qmd
 <h2> 🤳 Connect with me:</h2>
 
-[linkedin]: www.linkedin.com/in/bright-amenyo-597a84244
+[LinkedIn](https://www.linkedin.com/in/bright-amenyo-597a84244)
 <!--
 **Bright_Amenyo/Bright** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 
